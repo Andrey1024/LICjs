@@ -10,6 +10,12 @@ export class Stack<T> {
     }
 }
 
+export class Variable {
+    public value: number;
+    constructor(public name: string) {}
+}
+
+
 class List<T> {
     next: List<T> = null;
 
@@ -60,6 +66,22 @@ export class PolizConst implements IPolizItem {
     }
     evaluate(stack: Stack<IPolizItem>, cmd: CommandList<IPolizItem>) {
         stack.Push(this);
+        cmd.Next();
+    }
+}
+
+export class PolizVarAddr implements IPolizItem {
+    constructor(public value: Variable) {}
+    evaluate(stack: Stack<IPolizItem>, cmd: CommandList<IPolizItem>) {
+        stack.Push(this);
+        cmd.Next();
+    }
+}
+
+export class PolizVar implements IPolizItem {
+    evaluate(stack: Stack<IPolizItem>, cmd: CommandList<IPolizItem>) {
+        let arg = <PolizVarAddr>(stack.Pop());
+        stack.Push(new PolizConst(arg.value.value));
         cmd.Next();
     }
 }

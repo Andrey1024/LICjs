@@ -4,6 +4,3 @@ dist/
 typings/
 .tscache/
 src/.baseDir.ts
-
-**/*.js
-**/*.js.map

@@ -26,7 +26,7 @@ export class Expression {
     }
 
     getResult(): number {
-        return this.poliz.Execute();
+        return this.poliz.Execute([{name: 'x', value: 5}]);
     }
 
 

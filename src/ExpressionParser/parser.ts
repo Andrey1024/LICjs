@@ -1,9 +1,15 @@
 import {Lex, LexType} from './lexAnalyser';
 import * as Poliz  from './poliz'
 
+export interface Var {
+    name: string;
+    value: number;
+}
+
 export class Parser {
     private currIndex: number = 0;
     private poliz = new Poliz.CommandList<Poliz.IPolizItem>();
+    private varList: any = new Object();
 
     private currLex(): Lex {
         if (this.lexems.length <= this.currIndex)
@@ -62,7 +68,10 @@ export class Parser {
                 this.Function();
                 break;
             case LexType.lex_var:
-
+                this.varList[this.currLex().value] = new Poliz.Variable(this.currLex().value);
+                this.poliz.Push(new Poliz.PolizVarAddr(this.varList[this.currLex().value]));
+                this.poliz.Push(new Poliz.PolizVar());
+                this.currIndex++;
                 break;
             default:
                 throw "Bad factor";
@@ -101,9 +110,13 @@ export class Parser {
         this.Expression();
     }
 
-    public Execute(): number {
+    public Execute(varList: Var[]): number {
         let stack = new Poliz.Stack<Poliz.IPolizItem>();
         this.poliz.SetStart();
+        varList.forEach((val) => {
+            if (this.varList.hasOwnProperty(val.name))
+                this.varList[val.name].value = val.value;
+        })
 
         while (this.poliz.GetCurrent()) {
             this.poliz.GetCurrent().evaluate(stack, this.poliz);
