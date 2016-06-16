@@ -1,0 +1,21 @@
+{
+  "name": "jslic",
+  "version": "1.0.0",
+  "description": "JavaScript шimplementation of Line Integral Convolution",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrey Vlasov",
+  "license": "ISC",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "grunt": "^1.0.1",
+    "grunt-bower-task": "^0.4.0",
+    "grunt-build-control": "^0.7.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-ts": "^5.5.1",
+    "grunt-tsd": "^0.1.0"
+  }
+}

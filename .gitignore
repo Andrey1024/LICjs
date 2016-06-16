@@ -1,0 +1,9 @@
+node_modules/
+bower_components/
+dist/
+typings/
+.tscache/
+src/.baseDir.ts
+
+**/*.js
+**/*.js.map
