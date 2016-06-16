@@ -140,6 +140,14 @@ export class PolizCos extends PolizFunction {
     }
 }
 
+export class PolizPow extends PolizFunction {
+    evaluateFun(stack: Stack<IPolizItem>) {
+        let right = <PolizConst>stack.Pop();
+        let left = <PolizConst>stack.Pop();
+        return new PolizConst(Math.pow(left.value, right.value));
+    }
+}
+
 export class PolizUnaryMinus extends PolizFunction {
     evaluateFun(stack: Stack<IPolizItem>) {
         let arg = <PolizConst>stack.Pop();

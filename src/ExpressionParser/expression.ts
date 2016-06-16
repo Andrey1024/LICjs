@@ -3,6 +3,11 @@ import {Parser} from './parser'
 
 let Analyser = new LexAnalyser();
 
+export interface Variable {
+    name: string;
+    value: number;
+}
+
 export class Expression {
     private lexems: Lex[] = [];
     private poliz: Parser;
@@ -25,8 +30,8 @@ export class Expression {
         this.poliz.Parse();
     }
 
-    getResult(): number {
-        return this.poliz.Execute([{name: 'x', value: 5}]);
+    getResult(vars: Variable[] = []): number {
+        return this.poliz.Execute(vars);
     }
 
 

@@ -7,7 +7,8 @@ module.exports = function(grunt) {
             dist: {
                 files: [
                     {src: 'index.html', dest: 'dist/index.html'},
-					{cwd: 'Styles', src: '*.css', dest: 'dist/Styles', expand: true}
+					{cwd: 'Styles', src: '*.css', dest: 'dist/Styles', expand: true},
+					{cwd: 'assets', src: '**/*', dest: 'dist/assets', expand: true}
                 ]
             }
         },
@@ -29,7 +30,7 @@ module.exports = function(grunt) {
                 },
             },
             release: {
-                src: ["Scripts/**/*.ts"],
+                src: ["src/**/*.ts"],
                 outDir: 'dist/Build',
                 options: {
                     declaration: false,

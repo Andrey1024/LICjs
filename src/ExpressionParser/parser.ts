@@ -100,6 +100,9 @@ export class Parser {
             case 'cos':
                 this.poliz.Push(new Poliz.PolizCos());
                 break;
+            case 'pow':
+                this.poliz.Push(new Poliz.PolizPow());
+                break;
         }
         this.currIndex++;
     }
@@ -113,10 +116,10 @@ export class Parser {
     public Execute(varList: Var[]): number {
         let stack = new Poliz.Stack<Poliz.IPolizItem>();
         this.poliz.SetStart();
-        varList.forEach((val) => {
-            if (this.varList.hasOwnProperty(val.name))
-                this.varList[val.name].value = val.value;
-        })
+        for (let i = 0; i < varList.length; i++) {
+            if (this.varList.hasOwnProperty(varList[i].name))
+                this.varList[varList[i].name].value = varList[i].value;
+        }
 
         while (this.poliz.GetCurrent()) {
             this.poliz.GetCurrent().evaluate(stack, this.poliz);

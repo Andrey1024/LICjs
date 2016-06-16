@@ -7,8 +7,11 @@
 
 </head>
 <body>
-    <input data-bind="value: input" style="width: 100%"/>
-    <button data-bind="click: parse">Parse</button>
-    <textarea disabled data-bind="value: result"></textarea>
+    <div><input data-bind="value: inputX" style="width: 100%"/></div>
+    <div><input data-bind="value: inputY" style="width: 100%"/></div>
+    <div><button data-bind="click: parse, enable: enable" style="width: 100%, font-size: large">DO IT!!!!!</button></div>
+    <div>
+        <canvas class="webglCanvas" width="512" height="512"></canvas>
+    </div>
 </body>
 </html>
