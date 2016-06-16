@@ -70,10 +70,12 @@ export class Parser {
     }
 
     private Function() {
+        let func = this.currLex().value;
         this.currIndex++;
         if (this.currLex().type !== LexType.lex_lbracket) {
             throw "Expected opening bracket";            
         }
+        this.currIndex++;
         this.Expression();
         while (this.currLex().type === LexType.lex_comma) {
             this.currIndex++;
@@ -82,12 +84,12 @@ export class Parser {
         if (this.currLex().type !== LexType.lex_rbracket) {
             throw "Expected closing bracket";            
         }
-        switch(this.currLex().value) {
+        switch(func) {
             case 'sin':
-                this.poliz.Push(new Poliz.PolizSin);
+                this.poliz.Push(new Poliz.PolizSin());
                 break;
             case 'cos':
-                this.poliz.Push(new Poliz.PolizCos);
+                this.poliz.Push(new Poliz.PolizCos());
                 break;
         }
         this.currIndex++;
