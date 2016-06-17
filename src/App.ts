@@ -9,13 +9,16 @@ import ko = require('knockout');
 
 class viewModel {
     inputX = ko.observable("y");
-    inputY = ko.observable("0-x");
+    inputY = ko.observable("-x");
     result = ko.observable("");
     enable = ko.observable(false);
     parse = () => {        
         var parserX = new Expression(this.inputX());
         var parserY = new Expression(this.inputY());
-        requestAnimationFrame(() => this.model.render([parserX, parserY]));
+        let start = performance.now();
+        this.model.render([parserX, parserY]).done(() => {
+            console.log("compute field with parsed expressions took " + (performance.now() - start) + ' ms');
+        });
     }
 
     model: JSLIC;

@@ -33,16 +33,20 @@ export class JSLIC {
         return ret.promise();
     }
 
-    public render (parsers: Expression[]) {
+    public render (parsers: Expression[]): JQueryPromise<{}> {
+        let ret = $.Deferred();
         this.parsers = parsers;
         $.when(this.loadField()).done((v) => {
+            ret.resolve();
             (<glCore.Square>this.drawables[0]).FieldTexture = v;
             this.drawables.forEach((val) => {
                 val.Draw();
             });
-        });
-    }
 
+        });
+        return ret.promise();
+    }
+    
     private loadField(): JQueryPromise<glCore.Texture> {
         let ret = $.Deferred();
         setTimeout(() => {

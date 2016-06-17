@@ -18,7 +18,13 @@ export class Parser {
     }
 
     private Expression() {
+        let minusFlag = false;
+        if (this.currLex().type === LexType.lex_minus) {
+            minusFlag = true;
+            this.currIndex++;
+        }
         this.Term();
+        if (minusFlag) this.poliz.Push(new Poliz.PolizUnaryMinus());
         while (this.currLex().type === LexType.lex_plus ||
                this.currLex().type === LexType.lex_minus) {
             let op = this.currLex().type;
