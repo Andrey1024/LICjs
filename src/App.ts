@@ -10,8 +10,8 @@ import ko = require('knockout');
 
 
 class viewModel {
-    inputX = ko.observable("y");
-    inputY = ko.observable("-x");
+    inputX ="pow(y,2)";
+    inputY = "-x";
     enable = ko.observable(false);
 
     private canvas: HTMLCanvasElement;
@@ -27,42 +27,51 @@ class viewModel {
     public toolTipY = ko.observable("");
     private mousePos: number[];
     
-    private ParserX = ko.pureComputed(() => {
-        if (!this.parserX || this.parserX.input !== this.inputX() ) {
-            try {
-                this.parserX = new Expression(this.inputX());
-                this.errorX(true);
-            } catch (e) {
-                this.toolTipX(e);
-                this.errorX(false);
+
+    InputX = ko.pureComputed<string>({
+        read: () => {
+            return this.inputX;
+        },
+        write: (value) => {
+            if (!this.parserX || this.parserX.input !== value) {
+                try {
+                    this.parserX = new Expression(value);
+                    this.errorX(true);
+                    this.inputX = value;
+                    $.when(this.model.loadFieldTexture([this.parserX, this.parserY])).done( () => {
+                        this.model.render();
+                    });
+                } catch (e) {
+                    this.toolTipX(e);
+                    this.errorX(false);
+                }                    
             }
-        }
-        return this.parserX;
+        },
+        owner: this
     });
-    
-    private ParserY = ko.pureComputed(() => {
-        if (!this.parserY || this.parserY.input !== this.inputY() ) {
-            try {
-                this.parserY = new Expression(this.inputY());
-                this.errorY(true);
-            } catch (e) {
-                this.toolTipY(e);
-                this.errorY(false);
+
+    InputY = ko.pureComputed<string>({
+        read: () => {
+            return this.inputY;
+        },
+        write: (value) => {
+            if (!this.parserY || this.parserY.input !== value) {
+                try {
+                    this.parserY = new Expression(value);
+                    this.errorY(true);
+                    this.inputY = value;
+                    $.when(this.model.loadFieldTexture([this.parserX, this.parserY])).done( () => {
+                        this.model.render();
+                    });
+                } catch (e) {
+                    this.toolTipY(e);
+                    this.errorY(false);
+                }                    
             }
-        }
-        return this.parserY;
-    })
-
-    parse = () => {
-        $.when(this.model.loadFieldTexture([this.ParserX(), this.ParserY()])).done(() => {
-            requestAnimationFrame(() => { this.model.render(); });
-        });
-    }
-
-    scroll = (data, event: MouseWheelEvent) => {
-        this.model.scale(event.detail);
-    }
-
+        },
+        owner: this
+    });
+       
     mousedown = (data, event: MouseEvent) => {
         this.isMousedown = true;
         this.mousePos = [event.clientX, event.clientY];
@@ -83,7 +92,6 @@ class viewModel {
         this.mousePos = [event.clientX, event.clientY];
     }
 
-
     model: JSLIC;
 
     constructor() {
@@ -91,12 +99,15 @@ class viewModel {
         this.canvas.width = this.canvas.clientWidth;
         this.canvas.height = this.canvas.clientHeight;
         this.model = new JSLIC(this.canvas);
+        this.parserX = new Expression(this.inputX);
+        this.parserY = new Expression(this.inputY);
+
         (<any>$(".webglCanvas")).mousewheel((event) => {
             this.model.scale(event.deltaY);
             this.model.render();            
         })
-        $.when(this.model.loadNoiseTexture()).done( () => {
-            this.enable(true);
+        $.when(this.model.loadNoiseTexture(), this.model.loadFieldTexture()).done( () => {
+            this.model.render();
         });
     }
 }

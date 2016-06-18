@@ -13,14 +13,13 @@
             <div class="inputList">
                 <div class="inputBox">
                     <span class="inputHeader">X: </span>
-                    <input class="inputValue" id="inputX" data-bind="value: inputX, tooltip: {content: toolTipX, disabled: errorX, items: '#inputX'}, style: {backgroundColor: !errorX() ? '#F5A9BC' : 'white'}"/>
+                    <input class="inputValue" id="inputX" data-bind="value: InputX, valueUpdate: 'afterkeydown', tooltip: {content: toolTipX, disabled: errorX, items: '#inputX'}, style: {backgroundColor: !errorX() ? '#F5A9BC' : 'white'}"/>
                 </div>
                 <div class="inputBox">
                     <span class="inputHeader">Y: </span>
-                    <input class="inputValue" id="inputY" data-bind="value: inputY, tooltip: {content: toolTipY, disabled: errorY, items: '#inputY'}"/>
+                    <input class="inputValue" id="inputY" data-bind="value: InputY, valueUpdate: 'afterkeydown', tooltip: {content: toolTipY, disabled: errorY, items: '#inputY'}, style: {backgroundColor: !errorY() ? '#F5A9BC' : 'white'}"/>
                 </div>
             </div>
-            <div><button data-bind="click: parse, enable: enable">Parse</button></div>
         </div>
         <div class="center">
             <canvas class="webglCanvas" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup}"></canvas>
