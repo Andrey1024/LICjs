@@ -5,6 +5,8 @@ require.config({
     paths: {
         'knockout': '../lib/knockout/knockout',
         'jquery': '../lib/jquery/jquery',
-        'tinycolor2': '../lib/tinycolor/tinycolor'
+        'jquery-mousewheel': '../lib/jquery-mousewheel/jquery.mousewheel',        
+        'tinycolor2': '../lib/tinycolor/tinycolor',
+        'gl-matrix': '../lib/gl-matrix/gl-matrix-min'
     }
 });

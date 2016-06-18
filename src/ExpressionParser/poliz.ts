@@ -15,43 +15,28 @@ export class Variable {
     constructor(public name: string) {}
 }
 
-
-class List<T> {
-    next: List<T> = null;
-
-    constructor(public value: T) {}
-
-    Add(val: T) {
-        let p: List<T> = this;
-        while (p.next) {
-            p = p.next;
-        }
-        p.next = new List<T>(val);
-    }
-}
-
 export class CommandList<T> {
-    private current: List<T> = null;
-    private head: List<T> = null;
+    private current: number;
+    private list: T[];
 
     Push(val: T) {
-        this.head.Add(val);
+        this.list.push(val);
     }
 
     GetCurrent(): T {
-        return this.current ? this.current.value: undefined;
+        return this.list[this.current] ? this.list[this.current] : undefined;
     }
 
     Next() {
-        this.current = this.current.next;
+        this.current++;
     }
 
     SetStart() {
-        this.current = this.head.next;
+        this.current = 0;
     }
 
     constructor() {
-        this.head = new List<T>(null);
+        this.list = new Array<T>();
     }
 }
 

@@ -1,21 +1,33 @@
+/// <reference path="../../typings/gl-matrix/gl-matrix.d.ts" />
+
+import glMatrix = require("gl-matrix");
+
 let vertexLIC = "\n\
 attribute vec3 aVertexPosition;\n\
-varying vec2 vTextureCoords;\n\
+varying vec2 vTextureFieldCoords;\n\
+varying vec2 vTextureNoiseCoords;\n\
+uniform mat4 model;\n\
+uniform mat4 reverse;\n\
+\n\
 void main(void) {\n\
-    gl_Position = vec4(aVertexPosition, 1.0);\n\
-    vTextureCoords = aVertexPosition.xy * 0.5 + 0.5;\n\
-}"
+    gl_Position = model * vec4(aVertexPosition, 1.0);\n\
+    vTextureFieldCoords = aVertexPosition.xy * 0.5 + 0.5;\n\
+    vTextureNoiseCoords = aVertexPosition.xy * 0.5 + 0.5;\n\
+}\n\
+"
 
 let fragmentLIC = "\n\
 #define N 20\n\
 #define L 20.0\n\
 precision highp float;\n\
-varying vec2 vTextureCoords;\n\
+varying vec2 vTextureFieldCoords;\n\
+varying vec2 vTextureNoiseCoords;\n\
 uniform sampler2D image;\n\
 uniform sampler2D field;\n\
 uniform float size;\n\
 varying vec2 v_texCoord;\n\
 vec2 pointi;\n\
+vec2 noise_choord;\n\
 vec2 pointf;\n\
 vec2 vector;\n\
 vec2 v;\n\
@@ -57,20 +69,20 @@ float get_distance()\n\
     float bottom = max(bottom_distance(), 0.0);\n\
     float left   = max(left_distance()  , 0.0);\n\
     float right  = max(right_distance() , 0.0);\n\
-    \n\
+\n\
     float minimum = 2.0;\n\
     if (top    > eps) minimum = min(top   , minimum);\n\
     if (bottom > eps) minimum = min(bottom, minimum);\n\
     if (left   > eps) minimum = min(left  , minimum);\n\
     if (right  > eps) minimum = min(right , minimum);\n\
-    \n\
+\n\
     if (minimum  < eps   ) return 0.0;\n\
     if (minimum == 2.0   ) return 0.0;\n\
     pointf += vector * minimum;\n\
-    if (minimum == top   ) pointi.y += 1.0;\n\
-    if (minimum == bottom) pointi.y -+ 1.0;\n\
-    if (minimum == left  ) pointi.x -= 1.0;\n\
-    if (minimum == right ) pointi.x += 1.0;\n\
+    if (minimum == top   ) pointi.y += 1.0, noise_choord.y += 1.0;\n\
+    if (minimum == bottom) pointi.y -= 1.0, noise_choord.y -= 1.0;\n\
+    if (minimum == left  ) pointi.x -= 1.0, noise_choord.x -= 1.0;\n\
+    if (minimum == right ) pointi.x += 1.0, noise_choord.x += 1.0;\n\
     return minimum;\n\
 }\n\
 vec2 get_vector(vec2 p)\n\
@@ -99,12 +111,13 @@ void main()\n\
 {\n\
     float dist = 0.0, norm = 0.0;\n\
     vec4 result = vec4(0.0);\n\
-    pointi = floor(vTextureCoords * size);\n\
+    pointi = floor(vTextureFieldCoords * size);\n\
+    noise_choord = floor(vTextureNoiseCoords * size);\n\
     pointf = pointi + vec2(0.5, 0.5);\n\
     vector = get_vector(pointi);\n\
     //positive stream line\n\
     for(int i = 0; i < N; i++) {\n\
-        vec4 tmp  = texture2D(image, pointi / size);\n\
+        vec4 tmp  = texture2D(image, noise_choord / size);\n\
         float mod = get_distance();\n\
         if (mod < eps) break;\n\
         float t   = integrate(dist, dist + mod);\n\
@@ -115,11 +128,12 @@ void main()\n\
     }\n\
     //negative stream line\n\
     dist   = 0.0;\n\
-    pointi = floor(vTextureCoords * size);\n\
+    pointi = floor(vTextureFieldCoords * size);\n\
+    noise_choord = floor(vTextureNoiseCoords * size);\n\
     pointf = pointi + vec2(0.5, 0.5);\n\
     vector = -get_vector(pointi);\n\
     for(int i = 0; i < N; i++) {\n\
-        vec4 tmp  = texture2D(image, pointi / size);\n\
+        vec4 tmp  = texture2D(image, noise_choord / size);\n\
         float mod = get_distance();\n\
         if (mod < eps) break;\n\
         float t   = integrate(-dist, -dist - mod);\n\
@@ -130,8 +144,6 @@ void main()\n\
     }\n\
 \n\
     result /= norm;\n\
-    pointi = floor(vTextureCoords * size);\n\
-    vector = get_vector(pointi);\n\
     vec4 clr = mix(vec4(0.0, 0.0, 1.0, 1.0), vec4(1.0, 0.5, 0.0, 1.0), len / maxv);\n\
     gl_FragColor = result * clr;\n\
 }"
@@ -196,6 +208,8 @@ export class licShaderProgram extends ShaderProgram {
     private fragmentShader: Shader;
     //uniforms
     private size_loc: WebGLUniformLocation;
+    private model_loc: WebGLUniformLocation;
+    private reverse_loc: WebGLUniformLocation;
 
     constructor(gl: WebGLRenderingContext) {
         super(gl);
@@ -207,6 +221,8 @@ export class licShaderProgram extends ShaderProgram {
         this.link();
         this.use();
         this.size_loc = this.getUniLoc('size'); 
+        this.model_loc = this.getUniLoc('model');
+        this.reverse_loc = this.getUniLoc('reverse');
         
         this.size = 512;  
         gl.uniform1i(this.getUniLoc("image"), 0);
@@ -220,6 +236,21 @@ export class licShaderProgram extends ShaderProgram {
     public set size(v : number) {
         this.gl.uniform1f(this.size_loc, v);
     }   
+    
+    public get model() : Float32Array  {
+        return this.gl.getUniform(this.program, this.model_loc);
+    }    
+    public set model(v : Float32Array) {
+        this.gl.uniformMatrix4fv(this.model_loc, false, v);
+    }
+
+    
+    public get reverse() : Float32Array  {
+        return this.gl.getUniform(this.program, this.reverse_loc);
+    }    
+    public set reverse(v : Float32Array) {
+        this.gl.uniformMatrix4fv(this.reverse_loc, false, v);
+    }  
 }
 
 export abstract class Drawable {
@@ -344,7 +375,9 @@ export class Texture {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
         return result;
-    }
+    }    
+}
 
-    
+export class Camera {
+
 }

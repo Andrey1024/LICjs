@@ -24,7 +24,7 @@ export class Expression {
         return result;
     }
 
-    constructor (input: string) {
+    constructor (public input: string) {
         this.lexems = this.Parse(input);
         this.poliz = new Parser(this.lexems);
         this.poliz.Parse();

@@ -119,7 +119,7 @@ export class Parser {
         this.Expression();
     }
 
-    public Execute(varList: Var[]): number {
+    public Execute(varList: Var[]): number {// compute current poliz with given values of variables
         let stack = new Poliz.Stack<Poliz.IPolizItem>();
         this.poliz.SetStart();
         for (let i = 0; i < varList.length; i++) {
