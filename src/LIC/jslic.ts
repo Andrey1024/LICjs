@@ -14,6 +14,7 @@ export class JSLIC {
     private square: glCore.Drawable;
     private model: Float32Array;
     private reverse: Float32Array;
+    private size = 512;
 
     private animation: boolean = false;
 
@@ -26,6 +27,7 @@ export class JSLIC {
 
     constructor(canvas: HTMLCanvasElement) {
         this.gl = Helpers.createContext(canvas);
+        this.size = canvas.width;
         Helpers.loadExtenstion(this.gl, 'OES_texture_float');
         Helpers.loadExtenstion(this.gl, 'OES_texture_float_linear');
         this.shader = new glCore.licShaderProgram(this.gl);
@@ -43,13 +45,13 @@ export class JSLIC {
     }
 
     public moveX(i: number) {
-        i /= 256;
+        i /= this.size / 2;
         this.transX += i;
         this.createModelMat();
     }
 
     public moveY(i: number) {
-        i /= 256;
+        i /= this.size / 2;
         this.transY += i;
         this.createModelMat();
     }
@@ -76,16 +78,16 @@ export class JSLIC {
     private loadField(parsers?: Expression[]): JQueryPromise<glCore.Texture> {
         let ret = $.Deferred();
         setTimeout(() => {
-            let width = 512;
-            let height = 512;
+            let width = 1024;
+            let height = 1024;
             let arr: number[][][] = new Array(height);
 
             let start = Date.now();
             for (var i = 0; i < height; i++) {
                 arr[i] = new Array(width);
                 for (var j = 0; j < width; j++) {
-                    var x = (j - 256.5) / 100;
-                    var y = (256.5 - i) / 100;
+                    var x = (j - 512) / 100;
+                    var y = (512 - i) / 100;
                     var t = parsers;
                     var vx = parsers ? parsers[0].getResult([{name: 'x', value: x}, {name: 'y', value: y}]) : Math.pow(y, 2);
                     var vy = parsers ? parsers[1].getResult([{name: 'x', value: x}, {name: 'y', value: y}]) : -x;
@@ -131,6 +133,7 @@ export class JSLIC {
     }
 
     public render() {
+        this.shader.size = this.size;
         this.shader.model = this.model;
         //this.shader.reverse = this.reverse;
         this.square.Draw();

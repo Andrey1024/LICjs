@@ -1,7 +1,5 @@
 .webglCanvas {
-    padding: 10px;
-    border: 3px solid black;
-    border-radius: 10px;
+    width: 100%;
 }
 
 .app {
@@ -10,7 +8,7 @@
 }
 
 .app > .left {
-    flex: 0 1 calc(50% - 538px / 2);
+    flex: 0 1 25%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -18,7 +16,7 @@
 }
 
 .app > .right {
-    flex: 0 1 calc(50% - 538px / 2);
+    flex: 0 1 25%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -26,5 +24,33 @@
 .app > .center {
     display: flex;
     justify-content: center;
-    flex: 0 1 538px;
+    background-color: #f6f6f6;
+    flex: 0 1 40vw;
+    height: 40vw;
+    padding: 10px;
+    border: 3px solid black;
+    border-radius: 10px;
+}
+
+.inputList {
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f6f6;
+    border-radius: 0.5em;
+    padding: 0.4em;
+}
+
+.inputBox {
+    margin: 2px;
+    min-width: 10vw;
+}
+
+.inputHeader {
+    float: left;
+}
+
+.inputValue {
+    float: right;
+    border-radius: 3px;
+    vertical-align: middle; 
 }

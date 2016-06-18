@@ -2,6 +2,7 @@
 /// <reference path="../typings/jquery/jquery.d.ts" />
 /// <reference path="../typings/knockout/knockout.d.ts" />
 /// <amd-dependency path="jquery-mousewheel" />
+/// <amd-dependency path="knockout-jqueryui/tooltip" />
 
 import {Expression} from './ExpressionParser/Expression';
 import {JSLIC} from './LIC/jslic';
@@ -12,21 +13,42 @@ class viewModel {
     inputX = ko.observable("y");
     inputY = ko.observable("-x");
     enable = ko.observable(false);
+
+    private canvas: HTMLCanvasElement;
+
     private parserX: Expression;
     private parserY: Expression;
+
+    public isOpen = ko.observable(false);
     private isMousedown: boolean;
+    public errorX = ko.observable(true);
+    public errorY = ko.observable(true);
+    public toolTipX = ko.observable("");
+    public toolTipY = ko.observable("");
     private mousePos: number[];
     
     private ParserX = ko.pureComputed(() => {
         if (!this.parserX || this.parserX.input !== this.inputX() ) {
-            this.parserX = new Expression(this.inputX());
+            try {
+                this.parserX = new Expression(this.inputX());
+                this.errorX(true);
+            } catch (e) {
+                this.toolTipX(e);
+                this.errorX(false);
+            }
         }
         return this.parserX;
     });
     
     private ParserY = ko.pureComputed(() => {
         if (!this.parserY || this.parserY.input !== this.inputY() ) {
-            this.parserY = new Expression(this.inputY());
+            try {
+                this.parserY = new Expression(this.inputY());
+                this.errorY(true);
+            } catch (e) {
+                this.toolTipY(e);
+                this.errorY(false);
+            }
         }
         return this.parserY;
     })
@@ -65,7 +87,10 @@ class viewModel {
     model: JSLIC;
 
     constructor() {
-        this.model = new JSLIC(<HTMLCanvasElement>($(".webglCanvas").get(0)));
+        this.canvas = <HTMLCanvasElement>($(".webglCanvas").get(0));
+        this.canvas.width = this.canvas.clientWidth;
+        this.canvas.height = this.canvas.clientHeight;
+        this.model = new JSLIC(this.canvas);
         (<any>$(".webglCanvas")).mousewheel((event) => {
             this.model.scale(event.deltaY);
             this.model.render();            

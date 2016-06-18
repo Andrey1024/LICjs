@@ -7,6 +7,8 @@ require.config({
         'jquery': '../lib/jquery/jquery',
         'jquery-mousewheel': '../lib/jquery-mousewheel/jquery.mousewheel',        
         'tinycolor2': '../lib/tinycolor/tinycolor',
-        'gl-matrix': '../lib/gl-matrix/gl-matrix-min'
+        'gl-matrix': '../lib/gl-matrix/gl-matrix-min',
+        'jquery-ui': '../lib/jquery-ui',
+        'knockout-jqueryui': '../lib/knockout-jqueryui',
     }
 });

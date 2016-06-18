@@ -9,10 +9,13 @@
       "commit": "f481e77dfca5a146db1b4f5f20f15929b30c8729"
     },
     "jquery/jquery.d.ts": {
-      "commit": "f481e77dfca5a146db1b4f5f20f15929b30c8729"
+      "commit": "c02b03f677ca88e364cfda5308c58d0832664581"
     },
     "knockout/knockout.d.ts": {
       "commit": "f481e77dfca5a146db1b4f5f20f15929b30c8729"
+    },
+    "jqueryui/jqueryui.d.ts": {
+      "commit": "c02b03f677ca88e364cfda5308c58d0832664581"
     }
   }
 }

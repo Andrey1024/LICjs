@@ -4,17 +4,26 @@
     <title>JavaScript Line Integral Convolution</title>
     <script data-main="Build/boot.js" src="lib/requirejs/require.js"></script>
     <link rel="stylesheet" type="text/css" href="Styles/App.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/vader/jquery-ui.css">
 
 </head>
 <body>
     <div class="app">
         <div class="left">
-            <div><input data-bind="value: inputX"/></div>
-            <div><input data-bind="value: inputY"/></div>
+            <div class="inputList">
+                <div class="inputBox">
+                    <span class="inputHeader">X: </span>
+                    <input class="inputValue" id="inputX" data-bind="value: inputX, tooltip: {content: toolTipX, disabled: errorX, items: '#inputX'}, style: {backgroundColor: !errorX() ? '#F5A9BC' : 'white'}"/>
+                </div>
+                <div class="inputBox">
+                    <span class="inputHeader">Y: </span>
+                    <input class="inputValue" id="inputY" data-bind="value: inputY, tooltip: {content: toolTipY, disabled: errorY, items: '#inputY'}"/>
+                </div>
+            </div>
             <div><button data-bind="click: parse, enable: enable">Parse</button></div>
         </div>
         <div class="center">
-            <canvas class="webglCanvas" width="512" height="512" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup}"></canvas>
+            <canvas class="webglCanvas" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup}"></canvas>
         </div>
         <div class="right"></div>
     </div>
