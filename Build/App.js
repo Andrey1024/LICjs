@@ -91,6 +91,10 @@ define(["require", "exports", './LIC/JSlic', 'knockout', "jquery-mousewheel", "k
                     _this.model.moveY(offY);
                 _this.mousePos = [event.clientX, event.clientY];
             };
+            this.restoreModel = function () {
+                _this.model.restore();
+                _this.model.restore();
+            };
             this.canvas = ($(".webglCanvas").get(0));
             this.canvas.width = this.canvas.clientWidth;
             this.canvas.height = this.canvas.clientHeight;

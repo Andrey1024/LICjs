@@ -18,6 +18,11 @@ define(["require", "exports", "gl-matrix", 'jquery', './Shader', './glHelpers'],
             glMatrix.mat4.identity(this.model);
             glMatrix.mat4.identity(this.reverse);
         }
+        JSLIC.prototype.restore = function () {
+            this.scaleVal = 1;
+            this.transX = this.transY = 0;
+            this.createModelMat();
+        };
         JSLIC.prototype.scale = function (i) {
             i /= 20;
             if ((this.scaleVal += i) < 1) {
