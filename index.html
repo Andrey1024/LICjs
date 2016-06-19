@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>JavaScript Line Integral Convolution</title>
-    <script data-main="Build/boot.js" src="lib/requirejs/require.js"></script>
+    <script data-main="Build/Boot.js" src="lib/requirejs/require.js"></script>
     <link rel="stylesheet" type="text/css" href="Styles/App.css"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/vader/jquery-ui.css">
 
@@ -11,6 +11,7 @@
     <div class="app">
         <div class="left">
             <div class="inputList">
+                <div class="inputListHeader">Field Components:</div>
                 <div class="inputBox">
                     <span class="inputHeader">X: </span>
                     <input class="inputValue" id="inputX" data-bind="value: InputX, valueUpdate: 'afterkeydown', tooltip: {content: toolTipX, disabled: errorX, items: '#inputX'}, style: {backgroundColor: !errorX() ? '#F5A9BC' : 'white'}"/>
@@ -20,9 +21,28 @@
                     <input class="inputValue" id="inputY" data-bind="value: InputY, valueUpdate: 'afterkeydown', tooltip: {content: toolTipY, disabled: errorY, items: '#inputY'}, style: {backgroundColor: !errorY() ? '#F5A9BC' : 'white'}"/>
                 </div>
             </div>
+            <div class="inputList">
+                <div class="inputListHeader">Field Options:</div>
+                <div class="inputBox">
+                    <span class="inputHeader">Left: </span>
+                    <input type="number" class="inputValue" id="fieldLeft" data-bind="value: Left, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorLeft, items: '#fieldLeft'}, style: {backgroundColor: !errorLeft() ? '#F5A9BC' : 'white'}"/>
+                </div>
+                <div class="inputBox">
+                    <span class="inputHeader">Right: </span>
+                    <input type="number" class="inputValue" id="fieldRight" data-bind="value: Right, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorRight, items: '#fieldRight'}, style: {backgroundColor: !errorRight() ? '#F5A9BC' : 'white'}"/>
+                </div>
+                <div class="inputBox">
+                    <span class="inputHeader">Top: </span>
+                    <input type="number" class="inputValue" id="fieldTop" data-bind="value: Top, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorTop, items: '#fieldTop'}, style: {backgroundColor: !errorTop() ? '#F5A9BC' : 'white'}"/>
+                </div>
+                <div class="inputBox">
+                    <span class="inputHeader">Bottom: </span>
+                    <input type="number" class="inputValue" id="fieldBottom" data-bind="value: Bottom, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorBottom, items: '#fieldBottom'}, style: {backgroundColor: !errorBottom() ? '#F5A9BC' : 'white'}"/>
+                </div>
+            </div>
         </div>
         <div class="center">
-            <canvas class="webglCanvas" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup}"></canvas>
+            <canvas class="webglCanvas" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup, dblclick: restoreModel}"></canvas>
         </div>
         <div class="right"></div>
     </div>

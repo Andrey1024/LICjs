@@ -35,6 +35,10 @@ export class CommandList<T> {
         this.current = 0;
     }
 
+    Reset() {
+        this.list = [];
+    }
+
     constructor() {
         this.list = new Array<T>();
     }

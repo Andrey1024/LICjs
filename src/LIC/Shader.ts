@@ -2,7 +2,7 @@
 
 import glMatrix = require("gl-matrix");
 
-let vertexLIC = "\n\
+let vertexLIC = "\
 attribute vec3 aVertexPosition;\n\
 varying vec2 vTextureFieldCoords;\n\
 varying vec2 vTextureNoiseCoords;\n\
@@ -16,15 +16,16 @@ void main(void) {\n\
 }\n\
 "
 
-let fragmentLIC = "\n\
-#define N 20\n\
-#define L 20.0\n\
+let fragmentLIC = "\
+#define N 15\n\
+#define L 15.0\n\
 precision highp float;\n\
 varying vec2 vTextureFieldCoords;\n\
 varying vec2 vTextureNoiseCoords;\n\
 uniform sampler2D image;\n\
 uniform sampler2D field;\n\
 uniform float size;\n\
+uniform float maxv;\n\
 varying vec2 v_texCoord;\n\
 vec2 pointi;\n\
 vec2 noise_choord;\n\
@@ -32,7 +33,6 @@ vec2 pointf;\n\
 vec2 vector;\n\
 vec2 v;\n\
 float len;\n\
-float maxv;\n\
 const float eps = 0.000001;\n\
 \n\
 float top_distance()\n\
@@ -89,7 +89,6 @@ vec2 get_vector(vec2 p)\n\
 {\n\
     vec4 vt = texture2D(field, p / size);\n\
     len = vt.z;\n\
-    maxv = vt.w;\n\
     return normalize(vt.xy);\n\
 }\n\
 float core(float arg)\n\
@@ -98,11 +97,11 @@ float core(float arg)\n\
 }\n\
 float integrate(float start, float stop)\n\
 {\n\
-    float precize = 50.0;\n\
+    float precize = 5.0;\n\
     float step    = (stop - start) / precize;\n\
     float result  = 0.0;\n\
     float k       = 0.0;\n\
-    for(float i = 0.0; i < 50.0; i += 1.0) {\n\
+    for(float i = 0.0; i < 5.0; i += 1.0) {\n\
         result += core(start + step * i);\n\
     }\n\
     return result;\n\
@@ -210,6 +209,7 @@ export class licShaderProgram extends ShaderProgram {
     private size_loc: WebGLUniformLocation;
     private model_loc: WebGLUniformLocation;
     private reverse_loc: WebGLUniformLocation;
+    private max_loc: WebGLUniformLocation;
 
     constructor(gl: WebGLRenderingContext) {
         super(gl);
@@ -223,6 +223,7 @@ export class licShaderProgram extends ShaderProgram {
         this.size_loc = this.getUniLoc('size'); 
         this.model_loc = this.getUniLoc('model');
         this.reverse_loc = this.getUniLoc('reverse');
+        this.max_loc = this.getUniLoc('maxv');
         
         this.size = 512;  
         gl.uniform1i(this.getUniLoc("image"), 0);
@@ -237,6 +238,13 @@ export class licShaderProgram extends ShaderProgram {
         this.gl.uniform1f(this.size_loc, v);
     }   
     
+    public get max() : number {
+        return <number>this.gl.getUniform(this.program, this.max_loc);
+    }    
+    public set max(v : number) {
+        this.gl.uniform1f(this.max_loc, v);
+    } 
+
     public get model() : Float32Array  {
         return this.gl.getUniform(this.program, this.model_loc);
     }    
@@ -336,8 +344,23 @@ export class Texture {
         result.Bind();
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.generateMipmap(gl.TEXTURE_2D);
+
+        return result;
+    }
+
+    static fromArray(gl: WebGLRenderingContext, arr: Float32Array, width: number, height: number) {
+        let result = new Texture(gl, gl.TEXTURE1);
+        result.Bind();
+
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, arr);
+
+        gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.generateMipmap(gl.TEXTURE_2D);
 
         return result;
     }

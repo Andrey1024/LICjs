@@ -1,5 +1,5 @@
-import {Lex, LexType} from './lexAnalyser';
-import * as Poliz  from './poliz'
+import {Lex, LexType} from './LexAnalyser';
+import * as Poliz  from './Poliz'
 
 export interface Var {
     name: string;
@@ -10,6 +10,7 @@ export class Parser {
     private currIndex: number = 0;
     private poliz = new Poliz.CommandList<Poliz.IPolizItem>();
     private varList: any = new Object();
+    private lexems: Lex[] = [];
 
     private currLex(): Lex {
         if (this.lexems.length <= this.currIndex)
@@ -113,10 +114,14 @@ export class Parser {
         this.currIndex++;
     }
 
-    constructor(private lexems: Lex[]) { }
-
-    public Parse() {
-        this.Expression();
+    public Parse(lexems: Lex[]) {
+        if (this.lexems !== lexems) {
+            this.lexems = lexems;
+            this.poliz.Reset();
+            this.varList = {};
+            this.currIndex = 0;
+            this.Expression();            
+        }
     }
 
     public Execute(varList: Var[]): number {// compute current poliz with given values of variables

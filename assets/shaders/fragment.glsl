@@ -1,5 +1,5 @@
-#define N 20
-#define L 20.0
+#define N 15
+#define L 15.0
 precision highp float;
 varying vec2 vTextureFieldCoords;
 varying vec2 vTextureNoiseCoords;
@@ -79,11 +79,11 @@ float core(float arg)
 }
 float integrate(float start, float stop)
 {
-    float precize = 50.0;
+    float precize = 5.0;
     float step    = (stop - start) / precize;
     float result  = 0.0;
     float k       = 0.0;
-    for(float i = 0.0; i < 50.0; i += 1.0) {
+    for(float i = 0.0; i < 5.0; i += 1.0) {
         result += core(start + step * i);
     }
     return result;

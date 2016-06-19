@@ -6,7 +6,7 @@ import glMatrix = require("gl-matrix");
 import $ = require('jquery');
 import * as glCore from './Shader';
 import * as Helpers from './glHelpers';
-import {Expression} from '../ExpressionParser/Expression';
+import {Expression, IField} from '../ExpressionParser/Expression';
 
 export class JSLIC {
     private gl: WebGLRenderingContext;
@@ -29,6 +29,7 @@ export class JSLIC {
         this.gl = Helpers.createContext(canvas);
         this.size = canvas.width;
         Helpers.loadExtenstion(this.gl, 'OES_texture_float');
+        Helpers.loadExtenstion(this.gl, 'OES_half_float_linear ');        
         Helpers.loadExtenstion(this.gl, 'OES_texture_float_linear');
         this.shader = new glCore.licShaderProgram(this.gl);
         this.square = new glCore.Square(this.gl, this.shader);
@@ -38,9 +39,18 @@ export class JSLIC {
         glMatrix.mat4.identity(this.reverse);
     }
 
+    public restore() {
+        this.scaleVal = 1;
+        this.transX = this.transY = 0;
+        this.createModelMat();
+    }
+
     public scale(i: number) {
         i /= 20;
-        this.scaleVal += i;
+        if ((this.scaleVal += i) < 1) {
+            this.scaleVal -= i;
+            return;
+        }        
         this.createModelMat();
     }
 
@@ -75,27 +85,10 @@ export class JSLIC {
         return ret.promise();
     }
     
-    private loadField(parsers?: Expression[]): JQueryPromise<glCore.Texture> {
+    private loadField(field: IField): JQueryPromise<glCore.Texture> {
         let ret = $.Deferred();
         setTimeout(() => {
-            let width = 1024;
-            let height = 1024;
-            let arr: number[][][] = new Array(height);
-
-            let start = Date.now();
-            for (var i = 0; i < height; i++) {
-                arr[i] = new Array(width);
-                for (var j = 0; j < width; j++) {
-                    var x = (j - 512) / 100;
-                    var y = (512 - i) / 100;
-                    var t = parsers;
-                    var vx = parsers ? parsers[0].getResult([{name: 'x', value: x}, {name: 'y', value: y}]) : Math.pow(y, 2);
-                    var vy = parsers ? parsers[1].getResult([{name: 'x', value: x}, {name: 'y', value: y}]) : -x;
-                    arr[i][j] = [vx, vy];
-                }
-            }
-            console.log("Compute filed with " + (parsers ? "parsed" : "hardcoded") + " expressions took " + (Date.now() - start) + " ms");
-            let res = glCore.Texture.createFieldTexture(this.gl, arr);
+            let res = glCore.Texture.fromArray(this.gl, new Float32Array(field.buffer), field.width, field.height);
             ret.resolve(res);
         });
 
@@ -113,11 +106,12 @@ export class JSLIC {
         return ret.promise();
     }
 
-    public loadFieldTexture(parsers?: Expression[]): JQueryPromise<{}> {        
+    public loadFieldTexture(field: IField): JQueryPromise<{}> {        
         let ret = $.Deferred();
         let that = this;
-        $.when(this.loadField(parsers)).done((v) => {
+        $.when(this.loadField(field)).done((v) => {
             (<glCore.Square>that.square).FieldTexture = v;
+            this.shader.max = field.max ? field.max : 1;
             ret.resolve();
         })
         return ret.promise();
@@ -133,8 +127,8 @@ export class JSLIC {
     }
 
     public render() {
-        this.shader.size = this.size;
         this.shader.model = this.model;
+        this.shader.size = Math.floor(this.size * this.scaleVal);
         //this.shader.reverse = this.reverse;
         this.square.Draw();
         if (this.animation) requestAnimationFrame(() => { this.render();});

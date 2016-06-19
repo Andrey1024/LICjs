@@ -1,5 +1,6 @@
 .webglCanvas {
     width: 100%;
+    cursor: pointer;
 }
 
 .app {
@@ -38,6 +39,8 @@
     background-color: #f6f6f6;
     border-radius: 0.5em;
     padding: 0.4em;
+    margin: 0.4em;
+    min-width: 15em;
 }
 
 .inputBox {
@@ -53,4 +56,8 @@
     float: right;
     border-radius: 3px;
     vertical-align: middle; 
+}
+
+.ui-tooltip-content {
+    font-size: small;
 }
