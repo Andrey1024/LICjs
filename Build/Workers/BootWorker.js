@@ -1,10 +1,1 @@
-importScripts("../../lib/requirejs/require.js");
-var message;
-self.onmessage = function (ev) {
-    message = ev;
-};
-require(["./ParserWorker"], function (Parser) {
-    self.onmessage = Parser;
-    if (message !== undefined)
-        self.onmessage(message);
-});
+importScripts("../../lib/requirejs/require.js");var message;self.onmessage=function(a){message=a},require(["./ParserWorker"],function(a){self.onmessage=a,void 0!==message&&self.onmessage(message)});

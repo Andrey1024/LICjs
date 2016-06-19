@@ -1,4 +1,1 @@
-require(['Config'], function () {
-    require(['App'], function () {
-    });
-});
+require(["Config"],function(){require(["App"],function(){})});
