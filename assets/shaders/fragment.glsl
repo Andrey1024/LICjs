@@ -1,5 +1,5 @@
-#define N 20
-#define L 20.0
+#define N 15
+#define L 15.0
 precision highp float;
 varying vec2 vTextureFieldCoords;
 varying vec2 vTextureNoiseCoords;

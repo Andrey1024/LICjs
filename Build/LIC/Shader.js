@@ -19,8 +19,8 @@ void main(void) {\n\
 }\n\
 ";
     var fragmentLIC = "\
-#define N 20\n\
-#define L 20.0\n\
+#define N 15\n\
+#define L 15.0\n\
 precision highp float;\n\
 varying vec2 vTextureFieldCoords;\n\
 varying vec2 vTextureNoiseCoords;\n\
