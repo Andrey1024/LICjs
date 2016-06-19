@@ -12,6 +12,16 @@ module.exports = function(grunt) {
                 ]
             }
         },
+        uglify: {
+            dist: {         
+                files: [{
+                    expand: true,
+                    cwd: 'dist/Build',
+                    src: '**/*.js',
+                    dest: 'dist/Build'
+                }]
+            }
+        },
         bower: {
             install: {
                 options: {
@@ -69,13 +79,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-bower-task');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-tsd');
 	grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-build-control');
 
     grunt.registerTask('installDeps', ['bower', 'tsd']);
 	grunt.registerTask('build-dev', ['clean', 'installDeps', 'ts:default', 'copy']);
-    grunt.registerTask('build-release', ['clean', 'installDeps', 'ts:release', 'copy']);
+    grunt.registerTask('build-release', ['clean', 'installDeps', 'ts:release', 'uglify', 'copy']);
     grunt.registerTask('deploy', ['build-release', 'buildcontrol']);
 	grunt.registerTask('default', ['build-dev']);
 

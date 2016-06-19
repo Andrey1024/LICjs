@@ -28,8 +28,7 @@ export class JSLIC {
     constructor(canvas: HTMLCanvasElement) {
         this.gl = Helpers.createContext(canvas);
         this.size = canvas.width;
-        Helpers.loadExtenstion(this.gl, 'OES_texture_float');
-        Helpers.loadExtenstion(this.gl, 'OES_half_float_linear ');        
+        Helpers.loadExtenstion(this.gl, 'OES_texture_float');    
         Helpers.loadExtenstion(this.gl, 'OES_texture_float_linear');
         this.shader = new glCore.licShaderProgram(this.gl);
         this.square = new glCore.Square(this.gl, this.shader);
