@@ -13,7 +13,9 @@ export class JSLIC {
     private shader: glCore.licShaderProgram;
     private square: glCore.Drawable;
     private model: Float32Array;
-    private reverse: Float32Array;
+    private projection: Float32Array;
+    private view: Float32Array;
+    private MVP: Float32Array;
     private size = 512;
 
     private animation: boolean = false;
@@ -25,6 +27,14 @@ export class JSLIC {
     private transX = 0;
     private transY = 0;
 
+    private averageTime = 0;
+    private renderCount = 0;
+
+    
+    public get AverageRenderTime() : number {
+        return this.averageTime / this.renderCount;
+    }    
+
     constructor(canvas: HTMLCanvasElement) {
         this.gl = Helpers.createContext(canvas);
         this.size = canvas.width;
@@ -33,9 +43,13 @@ export class JSLIC {
         this.shader = new glCore.licShaderProgram(this.gl);
         this.square = new glCore.Square(this.gl, this.shader);
         this.model = glMatrix.mat4.create();
-        this.reverse = glMatrix.mat4.create();
+        this.projection = glMatrix.mat4.create();
+        this.view = glMatrix.mat4.create();
+        this.MVP = glMatrix.mat4.create();
+        glMatrix.mat4.identity(this.MVP);
         glMatrix.mat4.identity(this.model);
-        glMatrix.mat4.identity(this.reverse);
+        glMatrix.mat4.identity(this.view);
+        glMatrix.mat4.ortho(this.projection, -1, 1, -1, 1, -1, 1);
     }
 
     public restore() {
@@ -46,8 +60,8 @@ export class JSLIC {
 
     public scale(i: number) {
         i /= 20;
-        if ((this.scaleVal += i) < 1) {
-            this.scaleVal -= i;
+        if ((this.scaleVal -= i) < 0 || this.scaleVal > 1) {
+            this.scaleVal += i;
             return;
         }        
         this.createModelMat();
@@ -55,22 +69,27 @@ export class JSLIC {
 
     public moveX(i: number) {
         i /= this.size / 2;
-        this.transX += i;
+        this.transX -= i * this.scaleVal;
         this.createModelMat();
     }
 
     public moveY(i: number) {
         i /= this.size / 2;
-        this.transY += i;
+        this.transY -= i * this.scaleVal;
         this.createModelMat();
     }
 
     private createModelMat() {
         let ident = glMatrix.quat.create();
         glMatrix.quat.identity(ident);
-        let scale = glMatrix.vec3.fromValues(this.scaleVal, this.scaleVal, 0);
+        let scale = glMatrix.vec3.fromValues(this.scaleVal, this.scaleVal, 1);
         let trans = glMatrix.vec3.fromValues(this.transX, this.transY, 0);
-        glMatrix.mat4.fromRotationTranslationScale(this.model, ident, trans, scale);
+        let model = glMatrix.mat4.create();
+        glMatrix.mat4.fromRotationTranslationScale(model, ident, trans, scale);
+        this.view = glMatrix.mat4.invert(this.view, model);
+        //this.model = glMatrix.mat4.clone(model);
+        glMatrix.mat4.multiply(this.MVP, this.model, this.view);
+        glMatrix.mat4.multiply(this.MVP, this.MVP, this.projection);
     }
 
     private loadNoise(src?: string): JQueryPromise<glCore.Texture> {
@@ -126,10 +145,15 @@ export class JSLIC {
     }
 
     public render() {
-        this.shader.model = this.model;
-        this.shader.size = Math.floor(this.size * this.scaleVal);
+        let start = performance.now();
+        this.shader.model = this.MVP;
+        this.shader.size = Math.floor(this.size / this.scaleVal);
         //this.shader.reverse = this.reverse;
+        
         this.square.Draw();
         if (this.animation) requestAnimationFrame(() => { this.render();});
+
+        this.averageTime += performance.now() - start;
+        this.renderCount++;
     }
 }

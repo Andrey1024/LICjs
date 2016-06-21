@@ -7,7 +7,6 @@ attribute vec3 aVertexPosition;\n\
 varying vec2 vTextureFieldCoords;\n\
 varying vec2 vTextureNoiseCoords;\n\
 uniform mat4 model;\n\
-uniform mat4 reverse;\n\
 \n\
 void main(void) {\n\
     gl_Position = model * vec4(aVertexPosition, 1.0);\n\
@@ -208,7 +207,6 @@ export class licShaderProgram extends ShaderProgram {
     //uniforms
     private size_loc: WebGLUniformLocation;
     private model_loc: WebGLUniformLocation;
-    private reverse_loc: WebGLUniformLocation;
     private max_loc: WebGLUniformLocation;
 
     constructor(gl: WebGLRenderingContext) {
@@ -222,12 +220,12 @@ export class licShaderProgram extends ShaderProgram {
         this.use();
         this.size_loc = this.getUniLoc('size'); 
         this.model_loc = this.getUniLoc('model');
-        this.reverse_loc = this.getUniLoc('reverse');
         this.max_loc = this.getUniLoc('maxv');
         
         this.size = 512;  
         gl.uniform1i(this.getUniLoc("image"), 0);
         gl.uniform1i(this.getUniLoc("field"), 1);
+
     }
 
     
@@ -251,14 +249,6 @@ export class licShaderProgram extends ShaderProgram {
     public set model(v : Float32Array) {
         this.gl.uniformMatrix4fv(this.model_loc, false, v);
     }
-
-    
-    public get reverse() : Float32Array  {
-        return this.gl.getUniform(this.program, this.reverse_loc);
-    }    
-    public set reverse(v : Float32Array) {
-        this.gl.uniformMatrix4fv(this.reverse_loc, false, v);
-    }  
 }
 
 export abstract class Drawable {

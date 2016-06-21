@@ -21,6 +21,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding: 10px
 }
 .app > .center {
     display: flex;
@@ -33,7 +34,7 @@
     border-radius: 10px;
 }
 
-.inputList {
+.inputList , .outputList {
     display: flex;
     flex-direction: column;
     background-color: #f6f6f6;
@@ -43,12 +44,12 @@
     min-width: 15em;
 }
 
-.inputBox {
+.inputBox , .outputBox {
     margin: 2px;
     min-width: 10vw;
 }
 
-.inputHeader {
+.inputHeader , .outputHeader {
     float: left;
 }
 
@@ -56,6 +57,10 @@
     float: right;
     border-radius: 3px;
     vertical-align: middle; 
+}
+
+.outputValue {
+    float: right;
 }
 
 .ui-tooltip-content {

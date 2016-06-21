@@ -18,6 +18,8 @@ class viewModel {
     private left = -2;
     private right = 2;
 
+    AverageTime = ko.observable("0");
+
     // knockout binding properties for expressions
     InputX = ko.pureComputed<string>({
         read: () => { return this.inputX;},
@@ -114,6 +116,7 @@ class viewModel {
             case "value": 
                 $.when(this.model.loadFieldTexture(message.field)).done(() => {
                     this.model.render();
+                    this.AverageTime(this.model.AverageRenderTime.toFixed(4));
                 });
                 break;            
         }
@@ -159,6 +162,7 @@ class viewModel {
     mouseup = () => {
         this.isMousedown = false;
         this.model.stopAnimation();
+        this.AverageTime(this.model.AverageRenderTime.toFixed(4));
     }
 
     mousemove = (data, event: MouseEvent) => {
@@ -171,7 +175,6 @@ class viewModel {
     }
 
     restoreModel = () => {
-        this.model.restore();
         this.model.restore();
     }
 
@@ -186,7 +189,8 @@ class viewModel {
         // handle mouse wheel event using jquery plugin
         (<any>$(".webglCanvas")).mousewheel((event) => {
             this.model.scale(event.deltaY);
-            this.model.render();            
+            this.model.render();
+            this.AverageTime(this.model.AverageRenderTime.toFixed(4));
         })
 
         $.when(this.model.loadNoiseTexture()).done(() => {

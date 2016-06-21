@@ -65,7 +65,7 @@ export = (e: MessageEvent) => {
             buf[off + 1] = vy / mod;
             buf[off + 2] = mod;
         }    
-    console.log("Compute filed with parsed expressions took " + (Date.now() - start) + " ms");
+    console.log("Compute field with parsed expressions took " + (Date.now() - start) + " ms");
     (<any>self).postMessage(<Expr.IWorkerResponse>{type: "value", field: {buffer: buf.buffer, width: size, height: size, max: max}});
 
 }
