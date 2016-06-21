@@ -44,7 +44,15 @@
         <div class="center">
             <canvas class="webglCanvas" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup, dblclick: restoreModel}"></canvas>
         </div>
-        <div class="right"></div>
+        <div class="right">
+            <div class="outputList">
+                <div class="outputListHeader">Statistics:</div>
+                <div class="outputBox">
+                    <span class="outputHeader">Average Render Time: </span>
+                    <span class="outputValue" data-bind="text: AverageTime"/><span/>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
