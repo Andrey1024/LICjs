@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 .webglCanvas {
     width: 100%;
     cursor: pointer;
@@ -42,6 +46,11 @@
     padding: 0.4em;
     margin: 0.4em;
     min-width: 15em;
+}
+
+.inputListHeader , .outputListHeader {
+    margin: 0px 0px 10px 10px;
+    font-weight: bold;
 }
 
 .inputBox , .outputBox {
