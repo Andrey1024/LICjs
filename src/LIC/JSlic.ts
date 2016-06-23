@@ -80,14 +80,10 @@ export class JSLIC {
     }
 
     private createModelMat() {
-        let ident = glMatrix.quat.create();
-        glMatrix.quat.identity(ident);
+        let ident = glMatrix.quat.identity(glMatrix.quat.create());        
         let scale = glMatrix.vec3.fromValues(this.scaleVal, this.scaleVal, 1);
         let trans = glMatrix.vec3.fromValues(this.transX, this.transY, 0);
-        let model = glMatrix.mat4.create();
-        glMatrix.mat4.fromRotationTranslationScale(model, ident, trans, scale);
-        this.view = glMatrix.mat4.invert(this.view, model);
-        //this.model = glMatrix.mat4.clone(model);
+        this.view = glMatrix.mat4.invert(this.view, glMatrix.mat4.fromRotationTranslationScale(this.view, ident, trans, scale));
         glMatrix.mat4.multiply(this.MVP, this.model, this.view);
         glMatrix.mat4.multiply(this.MVP, this.MVP, this.projection);
     }
@@ -96,7 +92,7 @@ export class JSLIC {
         let ret = $.Deferred();
         let image = new Image();
         image.onload = () => {
-            let res = glCore.Texture.createNoiseTexture(this.gl, image);
+            let res = glCore.Texture.fromImage(this.gl, image);
             ret.resolve(res);
         }
         image.src = src ? src : 'assets/noise.png';

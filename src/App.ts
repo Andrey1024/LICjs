@@ -42,7 +42,7 @@ class viewModel {
     Top = ko.pureComputed({
         read: () => { return this.top;},
         write: (value) => {
-            this.top = value;
+            this.top = Number(value);
             if (this.checkBounds(this.errorTop)) this.sendMessage();
         },
         owner: this
@@ -50,7 +50,7 @@ class viewModel {
     Bottom = ko.pureComputed({
         read: () => { return this.bottom;},
         write: (value) => {
-            this.bottom = value;
+            this.bottom = Number(value);
             if (this.checkBounds(this.errorBottom)) this.sendMessage();
         },
         owner: this
@@ -58,7 +58,7 @@ class viewModel {
     Left = ko.pureComputed({
         read: () => { return this.left;},
         write: (value) => {
-            this.left = value;
+            this.left = Number(value);
             if (this.checkBounds(this.errorLeft)) this.sendMessage();
         },
         owner: this
@@ -66,7 +66,7 @@ class viewModel {
     Right = ko.pureComputed({
         read: () => { return this.right;},
         write: (value) => {
-            this.right = value;
+            this.right = Number(value);
             if (this.checkBounds(this.errorRight)) this.sendMessage();
         },
         owner: this

@@ -329,7 +329,7 @@ export class Texture {
         this.gl.bindTexture(this.target, this.texture);
     }
 
-    static createNoiseTexture(gl: WebGLRenderingContext, source: HTMLImageElement): Texture {
+    static fromImage(gl: WebGLRenderingContext, source: HTMLImageElement): Texture {
         let result = new Texture(gl);
         result.Bind();
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -353,42 +353,7 @@ export class Texture {
         gl.generateMipmap(gl.TEXTURE_2D);
 
         return result;
-    }
-
-    static createFieldTexture(gl: WebGLRenderingContext, arr: number[][][]): Texture {
-        let numPixels = arr.length * arr[0].length;
-        let width = arr[0].length;
-        let height = arr.length;
-        var size = numPixels * 4;
-        var buf = new Float32Array(size);
-        let max = 0;
-        for (var i = 0; i < height; i++)
-            for (var j = 0; j < width; j++) {
-                var off = (i * width + j) * 4;
-                var vx = arr[i][j][0];
-                var vy = arr[i][j][1];
-                var mod = Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2));
-                max = Math.max(max, mod);
-                buf[off + 0] = vx / mod;
-                buf[off + 1] = vy / mod;
-                buf[off + 2] = mod;
-                buf[off + 3] = max;
-            }
-
-        let result = new Texture(gl, gl.TEXTURE1);
-        result.Bind();
-
-        gl.texImage2D(
-            gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0,
-            gl.RGBA, gl.FLOAT, buf);
-
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-
-        return result;
-    }    
+    }  
 }
 
 export class Camera {

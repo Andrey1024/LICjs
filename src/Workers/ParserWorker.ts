@@ -4,15 +4,6 @@ let parserX = new Expr.Expression();
 let parserY = new Expr.Expression();
 let lastMessage: Expr.IWorkerMessage;
 
-function UpdateExpression(expression: Expr.Expression, input: string): boolean {
-    if (expression.IsValid && expression.Input === input.replace(/\s+/g, '')) {
-        return true;
-    } else {
-        expression.Parse(input);
-        return expression.IsValid;
-    }
-}
-
 export = (e: MessageEvent) => {
     let msg = <Expr.IWorkerMessage>e.data;
     let isChanged = false;
@@ -25,6 +16,9 @@ export = (e: MessageEvent) => {
         parserY.Parse(msg.input.y);
         isChanged = true;
     }
+
+    if (!isChanged && JSON.stringify(msg.bounds) === JSON.stringify(lastMessage.bounds))
+        return; //nothing changed
 
     if (!parserX.IsValid || !parserY.IsValid) { // there are errors in parsed expressions
         (<any>self).postMessage(<Expr.IWorkerResponse>
@@ -66,6 +60,6 @@ export = (e: MessageEvent) => {
             buf[off + 2] = mod;
         }    
     console.log("Compute field with parsed expressions took " + (Date.now() - start) + " ms");
+    lastMessage = msg;
     (<any>self).postMessage(<Expr.IWorkerResponse>{type: "value", field: {buffer: buf.buffer, width: size, height: size, max: max}});
-
 }
