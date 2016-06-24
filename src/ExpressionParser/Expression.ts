@@ -33,6 +33,7 @@ export interface IWorkerResponse {
     type: "error" | "value" | "parsed";
     error?: IParseError;
     field?: IField;
+    time?: number;
 }
 
 export interface IVariable {

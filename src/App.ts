@@ -3,6 +3,7 @@
 /// <reference path="../typings/knockout/knockout.d.ts" />
 /// <amd-dependency path="jquery-mousewheel" />
 /// <amd-dependency path="knockout-jqueryui/tooltip" />
+/// <amd-dependency path="knockout-jqueryui/buttonset" />
 
 import {Expression, IWorkerMessage, IWorkerResponse} from './ExpressionParser/Expression';
 import {JSLIC} from './LIC/JSlic';
@@ -18,7 +19,11 @@ class viewModel {
     private left = -2;
     private right = 2;
 
+    // fill field texture with expressions or data from file
+    InputType = ko.observable("expression"); // "expression" or "file"
+
     AverageTime = ko.observable("0");
+    AverageParse = ko.observable("0");
 
     // knockout binding properties for expressions
     InputX = ko.pureComputed<string>({
@@ -73,7 +78,7 @@ class viewModel {
     });
 
     // worker for parsing expressions and compute field
-    private parserWorker: Worker = new Worker("./Build/Workers/BootWorker.js");
+    private parserWorker: Worker = new Worker("./Build/Workers/BootParse.js");
 
     // canvas with webgl context
     private canvas: HTMLCanvasElement;
@@ -117,6 +122,7 @@ class viewModel {
                 $.when(this.model.loadFieldTexture(message.field)).done(() => {
                     this.model.render();
                     this.AverageTime(this.model.AverageRenderTime.toFixed(4));
+                    this.AverageParse(message.time.toFixed(4));
                 });
                 break;            
         }

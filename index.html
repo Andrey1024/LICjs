@@ -1,57 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JavaScript Line Integral Convolution</title>
+    <title>JavaScript LIC</title>
     <script data-main="Build/Boot.js" src="lib/requirejs/require.js"></script>
     <link rel="stylesheet" type="text/css" href="Styles/App.css"/>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/vader/jquery-ui.css">
-
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 </head>
 <body>
-    <div class="app">
-        <div class="left">
-            <div class="inputList">
-                <div class="inputListHeader">Field Components:</div>
-                <div class="inputBox">
-                    <span class="inputHeader">X: </span>
-                    <input class="inputValue" id="inputX" data-bind="value: InputX, valueUpdate: 'input', tooltip: {content: toolTipX, disabled: errorX, items: '#inputX'}, style: {backgroundColor: !errorX() ? '#F5A9BC' : 'white'}"/>
+    <div class="wrapper">
+        <div class="header"><h1>JavaScript Line Integral Convolution</h1></div>
+        <div class="app">
+            <div class="left">
+                <div data-bind="buttonset: {refreshOn: InputType}" style="width: 100%">
+                    <input id="expression" type="radio" name="inputType" value="expression" data-bind="checked: InputType"/><label class="input-type" for="expression">Expression</label>
+                    <input id="file" type="radio" name="inputType" value="file" data-bind="checked: InputType"/><label class="input-type" for="file">File</label>
                 </div>
-                <div class="inputBox">
-                    <span class="inputHeader">Y: </span>
-                    <input class="inputValue" id="inputY" data-bind="value: InputY, valueUpdate: 'input', tooltip: {content: toolTipY, disabled: errorY, items: '#inputY'}, style: {backgroundColor: !errorY() ? '#F5A9BC' : 'white'}"/>
+                <!-- ko if: InputType() === "expression" -->
+                <div class="inputList">
+                    <div class="inputListHeader">Field Components:</div>
+                    <div class="inputBox">
+                        <span class="inputHeader">X: </span>
+                        <input class="inputValue" id="inputX" data-bind="value: InputX, valueUpdate: 'input', tooltip: {content: toolTipX, disabled: errorX, items: '#inputX'}, style: {backgroundColor: !errorX() ? '#F5A9BC' : 'white'}"/>
+                    </div>
+                    <div class="inputBox">
+                        <span class="inputHeader">Y: </span>
+                        <input class="inputValue" id="inputY" data-bind="value: InputY, valueUpdate: 'input', tooltip: {content: toolTipY, disabled: errorY, items: '#inputY'}, style: {backgroundColor: !errorY() ? '#F5A9BC' : 'white'}"/>
+                    </div>
                 </div>
+                <div class="inputList">
+                    <div class="inputListHeader">Field Options:</div>
+                    <div class="inputBox">
+                        <span class="inputHeader">Left: </span>
+                        <input type="number" class="inputValue" id="fieldLeft" data-bind="value: Left, valueUpdate: 'input', tooltip: {content: toolTipBound, disabled: errorLeft, items: '#fieldLeft'}, style: {backgroundColor: !errorLeft() ? '#F5A9BC' : 'white'}"/>
+                    </div>
+                    <div class="inputBox">
+                        <span class="inputHeader">Right: </span>
+                        <input type="number" class="inputValue" id="fieldRight" data-bind="value: Right, valueUpdate: 'input', tooltip: {content: toolTipBound, disabled: errorRight, items: '#fieldRight'}, style: {backgroundColor: !errorRight() ? '#F5A9BC' : 'white'}"/>
+                    </div>
+                    <div class="inputBox">
+                        <span class="inputHeader">Top: </span>
+                        <input type="number" class="inputValue" id="fieldTop" data-bind="value: Top, valueUpdate: 'input', tooltip: {content: toolTipBound, disabled: errorTop, items: '#fieldTop'}, style: {backgroundColor: !errorTop() ? '#F5A9BC' : 'white'}"/>
+                    </div>
+                    <div class="inputBox">
+                        <span class="inputHeader">Bottom: </span>
+                        <input type="number" class="inputValue" id="fieldBottom" data-bind="value: Bottom, valueUpdate: 'input', tooltip: {content: toolTipBound, disabled: errorBottom, items: '#fieldBottom'}, style: {backgroundColor: !errorBottom() ? '#F5A9BC' : 'white'}"/>
+                    </div>                
+                </div>
+                <!-- /ko -->
             </div>
-            <div class="inputList">
-                <div class="inputListHeader">Field Options:</div>
-                <div class="inputBox">
-                    <span class="inputHeader">Left: </span>
-                    <input type="number" class="inputValue" id="fieldLeft" data-bind="value: Left, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorLeft, items: '#fieldLeft'}, style: {backgroundColor: !errorLeft() ? '#F5A9BC' : 'white'}"/>
-                </div>
-                <div class="inputBox">
-                    <span class="inputHeader">Right: </span>
-                    <input type="number" class="inputValue" id="fieldRight" data-bind="value: Right, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorRight, items: '#fieldRight'}, style: {backgroundColor: !errorRight() ? '#F5A9BC' : 'white'}"/>
-                </div>
-                <div class="inputBox">
-                    <span class="inputHeader">Top: </span>
-                    <input type="number" class="inputValue" id="fieldTop" data-bind="value: Top, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorTop, items: '#fieldTop'}, style: {backgroundColor: !errorTop() ? '#F5A9BC' : 'white'}"/>
-                </div>
-                <div class="inputBox">
-                    <span class="inputHeader">Bottom: </span>
-                    <input type="number" class="inputValue" id="fieldBottom" data-bind="value: Bottom, valueUpdate: 'afterkeydown', tooltip: {content: toolTipBound, disabled: errorBottom, items: '#fieldBottom'}, style: {backgroundColor: !errorBottom() ? '#F5A9BC' : 'white'}"/>
+            <div class="center">
+                <canvas class="webglCanvas" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup, dblclick: restoreModel}"></canvas>
+            </div>
+            <div class="right">
+                <div class="outputList">
+                    <div class="outputListHeader">Statistics:</div>
+                    <div class="outputBox">
+                        <span class="outputHeader">Average Render Time: </span>
+                        <span class="outputValue" data-bind="text: AverageTime"/><span/>
+                    </div>
+                    <div class="outputBox">
+                        <span class="outputHeader">Average Field Computation: </span>
+                        <span class="outputValue" data-bind="text: AverageParse"/><span/>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="center">
-            <canvas class="webglCanvas" data-bind="event: {mousedown: mousedown, mouseup: mouseup, mousemove: mousemove, mouseout: mouseup, dblclick: restoreModel}"></canvas>
-        </div>
-        <div class="right">
-            <div class="outputList">
-                <div class="outputListHeader">Statistics:</div>
-                <div class="outputBox">
-                    <span class="outputHeader">Average Render Time: </span>
-                    <span class="outputValue" data-bind="text: AverageTime"/><span/>
-                </div>
-            </div>
+        <div class="footer">
+            <hr>
+            <p>Andrey Vlasov | <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a> | <a href="https://github.com/Andrey1024/LICjs">Source</p>
         </div>
     </div>
 </body>

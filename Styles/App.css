@@ -2,9 +2,35 @@
     box-sizing: border-box;
 }
 
+body {
+    background-color: #f0f5fc;
+}
+
 .webglCanvas {
     width: 100%;
     cursor: pointer;
+}
+
+.wrapper {
+    width: 70vw;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.header {
+    width: 100%;
+    height: 5em;
+    font-weight: 400;
+    font-family: "Droid Sans", Arial, Helvetica, sans-serif;
+    border: 2px solid;
+    border-radius: 10px;
+    text-align: center;
+    margin: 5px;
+}
+
+.footer {
+    color: rgb(196, 196, 196);
 }
 
 .app {
@@ -13,7 +39,7 @@
 }
 
 .app > .left {
-    flex: 0 1 25%;
+    flex: 0 1 15vw;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -21,7 +47,7 @@
 }
 
 .app > .right {
-    flex: 0 1 25%;
+    flex: 0 1 15vw;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -41,11 +67,12 @@
 .inputList , .outputList {
     display: flex;
     flex-direction: column;
-    background-color: #f6f6f6;
+    background-color: #d7e7f7;
     border-radius: 0.5em;
     padding: 0.4em;
     margin: 0.4em;
     min-width: 15em;
+    width: 100%;
 }
 
 .inputListHeader , .outputListHeader {
@@ -74,4 +101,12 @@
 
 .ui-tooltip-content {
     font-size: small;
+}
+
+.ui-widget {
+    font-size: 1em;
+}
+
+.input-type.ui-button {
+    width: 50%;
 }

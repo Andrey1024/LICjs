@@ -30,7 +30,7 @@ module.exports = function(grunt) {
             }
         },
         ts: {
-            default : {
+            dev : {
                 src: ["src/**/*.ts"],
                 outDir: 'dist/Build',
                 options: {
@@ -85,9 +85,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-build-control');
 
     grunt.registerTask('installDeps', ['bower', 'tsd']);
-	grunt.registerTask('build-dev', ['clean', 'installDeps', 'ts:default', 'copy']);
+	grunt.registerTask('build-dev', ['clean', 'installDeps', 'ts:dev', 'copy']);
     grunt.registerTask('build-release', ['clean', 'installDeps', 'ts:release', 'uglify', 'copy']);
     grunt.registerTask('deploy', ['build-release', 'buildcontrol']);
 	grunt.registerTask('default', ['build-dev']);
+	grunt.registerTask('dev', ['clean', 'bower', 'ts:dev', 'copy']);
 
 };

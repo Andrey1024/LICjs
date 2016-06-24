@@ -3,6 +3,8 @@ import * as Expr from '../ExpressionParser/Expression';
 let parserX = new Expr.Expression();
 let parserY = new Expr.Expression();
 let lastMessage: Expr.IWorkerMessage;
+let AverageTime = 0;
+let ParseCount = 0;
 
 export = (e: MessageEvent) => {
     let msg = <Expr.IWorkerMessage>e.data;
@@ -58,8 +60,9 @@ export = (e: MessageEvent) => {
             buf[off + 0] = vx / mod;
             buf[off + 1] = vy / mod;
             buf[off + 2] = mod;
-        }    
-    console.log("Compute field with parsed expressions took " + (Date.now() - start) + " ms");
+        }
     lastMessage = msg;
-    (<any>self).postMessage(<Expr.IWorkerResponse>{type: "value", field: {buffer: buf.buffer, width: size, height: size, max: max}});
+    ParseCount++;
+    AverageTime += Date.now() - start;
+    (<any>self).postMessage(<Expr.IWorkerResponse>{type: "value", field: {buffer: buf.buffer, width: size, height: size, max: max}, time: AverageTime / ParseCount});
 }
