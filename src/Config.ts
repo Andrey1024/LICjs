@@ -10,5 +10,6 @@ require.config({
         'gl-matrix': '../lib/gl-matrix/gl-matrix-min',
         'jquery-ui': '../lib/jquery-ui',
         'knockout-jqueryui': '../lib/knockout-jqueryui',
+        'rx': '../lib/rxjs/rx.all',
     }
 });

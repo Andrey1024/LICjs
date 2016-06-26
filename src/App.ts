@@ -5,11 +5,16 @@
 /// <amd-dependency path="knockout-jqueryui/tooltip" />
 /// <amd-dependency path="knockout-jqueryui/buttonset" />
 
-import {Expression, IWorkerMessage, IWorkerResponse} from './ExpressionParser/Expression';
-import {JSLIC} from './LIC/JSlic';
+import { JSLIC } from './LIC/JSlic';
 import ko = require('knockout');
+import { TaskManager } from './Workers/TaskManager';
+import { IWorkerMessage, IWorkerResponse, IParseError } from './ExpressionParser/Expression'
+import Rx = require("rx");
 
 class viewModel {
+    private parser: TaskManager;
+    private progress = 0; // field computing progress
+    private ready = false; // true when field computed first time
     // field expressions
     private inputX ="pow(y,2)";
     private inputY = "-x";
@@ -77,9 +82,6 @@ class viewModel {
         owner: this
     });
 
-    // worker for parsing expressions and compute field
-    private parserWorker: Worker = new Worker("./Build/Workers/BootParse.js");
-
     // canvas with webgl context
     private canvas: HTMLCanvasElement;
 
@@ -104,7 +106,7 @@ class viewModel {
     // handle message received from worker
     private handleMessage(message: IWorkerResponse) {
         switch (message.type) {
-            case "error": // there is error in entered expressions
+            case "error":
                 if (message.error.errorX) {
                     this.errorX(false);
                     this.toolTipX(message.error.errorX);
@@ -113,6 +115,9 @@ class viewModel {
                     this.errorY(false);
                     this.toolTipY(message.error.errorY);
                 } else { this.errorY(true)}
+                break;
+            case "progress":
+                $(".progress").css('height', message.progress + '%');
                 break;
             case "parsed":
                 this.errorX(true);
@@ -143,7 +148,7 @@ class viewModel {
             },
             size: 1024
         };
-        this.parserWorker.postMessage(message);
+        this.parser.StartTask(message).subscribe((e) => {this.handleMessage(e);});
     }
 
     // 
@@ -191,7 +196,7 @@ class viewModel {
         this.canvas.width = this.canvas.clientWidth;
         this.canvas.height = this.canvas.clientHeight;
         this.model = new JSLIC(this.canvas);
-        this.parserWorker.onmessage = (msg) => { this.handleMessage(msg.data);};
+        this.parser = new TaskManager('./Build/Workers/BootParse.js');
         // handle mouse wheel event using jquery plugin
         (<any>$(".webglCanvas")).mousewheel((event) => {
             this.model.scale(event.deltaY);

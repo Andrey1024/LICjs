@@ -84,7 +84,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-build-control');
 
-    grunt.registerTask('installDeps', ['bower', 'tsd']);
+    grunt.registerTask('installDeps', ['bower']);
 	grunt.registerTask('build-dev', ['clean', 'installDeps', 'ts:dev', 'copy']);
     grunt.registerTask('build-release', ['clean', 'installDeps', 'ts:release', 'uglify', 'copy']);
     grunt.registerTask('deploy', ['build-release', 'buildcontrol']);

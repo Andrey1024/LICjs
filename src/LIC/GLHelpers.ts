@@ -5,7 +5,7 @@ export function createContext(canvas: HTMLCanvasElement) {
         gl = null;
     }
     
-    gl.clearColor(0.0, 1.0, 0.0, 1.0);
+    gl.clearColor(0.9647058823529412, 0.9647058823529412, 0.9647058823529412, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
 
     gl.viewport(0, 0, canvas.width, canvas.height);

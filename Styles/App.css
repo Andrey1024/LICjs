@@ -9,6 +9,7 @@ body {
 .webglCanvas {
     width: 100%;
     cursor: pointer;
+    z-index: 1;
 }
 
 .wrapper {
@@ -23,10 +24,8 @@ body {
     height: 5em;
     font-weight: 400;
     font-family: "Droid Sans", Arial, Helvetica, sans-serif;
-    border: 2px solid;
-    border-radius: 10px;
     text-align: center;
-    margin: 5px;
+    padding: 5px;
 }
 
 .footer {
@@ -38,21 +37,35 @@ body {
     justify-content: center;
 }
 
-.app > .left {
+.app > .left , .app > .right {
     flex: 0 1 15vw;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     padding: 10px;
+    border-top: 0px;
+}
+
+/*borders*/
+.app > .left , .app > .center , .app > .right , .header {
+    border: 2px solid grey;
+    border-radius: 4px;
+}
+
+.app > .left , .app > .center , .app > .right {
+    border-top: 0px;
+}
+
+
+.app > .left {
+    align-items: flex-end;
+    border-right: 0px;
 }
 
 .app > .right {
-    flex: 0 1 15vw;
-    display: flex;
-    flex-direction: column;
     align-items: flex-start;
-    padding: 10px
+    border-left: 0px;
 }
+
 .app > .center {
     display: flex;
     justify-content: center;
@@ -60,8 +73,17 @@ body {
     flex: 0 1 40vw;
     height: 40vw;
     padding: 10px;
-    border: 3px solid black;
-    border-radius: 10px;
+    position: relative;
+}
+
+.progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: limegreen;
+    height: 0;
+    z-index: 0;
 }
 
 .inputList , .outputList {
@@ -70,7 +92,7 @@ body {
     background-color: #d7e7f7;
     border-radius: 0.5em;
     padding: 0.4em;
-    margin: 0.4em;
+    margin: 0.4em 0;
     min-width: 15em;
     width: 100%;
 }
@@ -91,7 +113,6 @@ body {
 
 .inputValue {
     float: right;
-    border-radius: 3px;
     vertical-align: middle; 
 }
 
@@ -105,6 +126,10 @@ body {
 
 .ui-widget {
     font-size: 1em;
+}
+
+.left > .ui-buttonset {
+    margin-right: 0;
 }
 
 .input-type.ui-button {

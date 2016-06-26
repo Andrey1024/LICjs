@@ -29,11 +29,18 @@ export interface IParseError {
     errorY: string;
 }
 
+
 export interface IWorkerResponse {
-    type: "error" | "value" | "parsed";
+    type: "error" | "value" | "parsed" | "progress";
     error?: IParseError;
     field?: IField;
     time?: number;
+    progress?: number;
+}
+
+export interface IResult {
+    progress: number;
+    result: ArrayBuffer;
 }
 
 export interface IVariable {

@@ -2,9 +2,6 @@ import * as Expr from '../ExpressionParser/Expression';
 
 let parserX = new Expr.Expression();
 let parserY = new Expr.Expression();
-let lastMessage: Expr.IWorkerMessage;
-let AverageTime = 0;
-let ParseCount = 0;
 
 export = (e: MessageEvent) => {
     let msg = <Expr.IWorkerMessage>e.data;
@@ -19,8 +16,6 @@ export = (e: MessageEvent) => {
         isChanged = true;
     }
 
-    if (!isChanged && JSON.stringify(msg.bounds) === JSON.stringify(lastMessage.bounds))
-        return; //nothing changed
 
     if (!parserX.IsValid || !parserY.IsValid) { // there are errors in parsed expressions
         (<any>self).postMessage(<Expr.IWorkerResponse>
@@ -48,7 +43,7 @@ export = (e: MessageEvent) => {
     let buf = new Float32Array(arrayLength);
     let max = 0;
     let start = Date.now();
-    for (var i = 0; i < size; i++)
+    for (var i = 0; i < size; i++) {
         for (var j = 0; j < size; j++) {
             var off = (i * size + j) * 4;
             let x = left + j * step;
@@ -61,8 +56,7 @@ export = (e: MessageEvent) => {
             buf[off + 1] = vy / mod;
             buf[off + 2] = mod;
         }
-    lastMessage = msg;
-    ParseCount++;
-    AverageTime += Date.now() - start;
-    (<any>self).postMessage(<Expr.IWorkerResponse>{type: "value", field: {buffer: buf.buffer, width: size, height: size, max: max}, time: AverageTime / ParseCount});
+        (<any>self).postMessage(<Expr.IWorkerResponse>{type: "progress", progress: (i + 1) * 100 / size});
+    }
+    (<any>self).postMessage(<Expr.IWorkerResponse>{type: "value", field: {buffer: buf.buffer, width: size, height: size, max: max}, time: Date.now() - start});
 }
